@@ -1,6 +1,6 @@
-﻿using System.Security.Authentication;
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 using LeerData.Models;
 
@@ -84,12 +84,63 @@ namespace LeerData
         }
 
 
+        public static int EscrituraInstructor()
+        {
+            using (var db = new AppVentaCursosContext())
+            {
+                Instructor nuevo = new Instructor
+                {
+                    Nombre = "Marco",
+                    Apellidos = "Mendez Sánchez",
+                    Grado = "Master en computación"
+                };
+                db.Add(nuevo);
+                return db.SaveChanges();
+            }
+        }
+
+        public static int SobreEscrituraInstructor()
+        {
+            using (var db = new AppVentaCursosContext())
+            {
+                Instructor instructor = db.Instructor.Single(p => p.Nombre == "Marco");
+                if (instructor != null)
+                {
+                    instructor.Apellidos = "Marín Arellano";
+                }
+
+                return db.SaveChanges();
+            }
+        }
+
+        public static int RemoverInstructor()
+        {
+            using (var db = new AppVentaCursosContext())
+            {
+                Instructor instructor = db.Instructor.Single(p => p.InstructorId == 5);
+                if (instructor != null)
+                {
+                    db.Remove(instructor);
+                }
+
+                return db.SaveChanges();
+            }
+        }
+
+
         static void Main(string[] args)
         {
             //Ejemplo de Lectura
-            LecturaCursoProfesores();
+            // LecturaCursoProfesores();
 
+            //Ejemplo de escritura
+            //Console.WriteLine("Es estado de la Transaccion es: {0}", EscrituraInstructor());
 
+            //Ejemplo de Sobre Escritura
+            //Console.WriteLine("Es estado de la Transaccion es: {0}", SobreEscrituraInstructor());
+
+            //Ejemplo de Sobre Escritura
+            Console.WriteLine("Es estado de la Transaccion es: {0}", RemoverInstructor());
         }
     }
 }

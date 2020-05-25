@@ -66,20 +66,18 @@ namespace LeerData
         // Ejemplo de consulta Muchos a Muchos
         public static void LecturaCursoProfesores()
         {
-            using (var db = new AppVentaCursosContext())
+            var db = new AppVentaCursosContext();
+            // En esta linea se hace el cruce de las 3 tablas Curso ¬ CursoInstructor ¬ Instructor
+            var cursos = db.Curso.Include(c => c.InstructorLink).ThenInclude(ci => ci.Instructor);
+            foreach (Curso curso in cursos) // arreglo IQueryable se pasa al tipo de dato que requiere
             {
-                // En esta linea se hace el cruce de las 3 tablas Curso ¬ CursoInstructor ¬ Instructor
-                var cursos = db.Curso.Include(c => c.InstructorLink).ThenInclude(ci => ci.Instructor);
-                foreach (Curso curso in cursos) // arreglo IQueryable se pasa al tipo de dato que requiere
+                Console.WriteLine("**--- {0} ---**", curso.Titulo);
+                Console.WriteLine("-------------------- Profesores --------------------");
+                foreach (CursoInstructor instrLink in curso.InstructorLink)
                 {
-                    Console.WriteLine("**--- {0} ---**", curso.Titulo);
-                    Console.WriteLine("-------------------- Profesores --------------------");
-                    foreach (CursoInstructor instrLink in curso.InstructorLink)
-                    {
-                        Console.WriteLine("Nombre: -> {0} | {1} \n", instrLink.Instructor.Nombre, instrLink.Instructor.Apellidos);
-                    }
-
+                    Console.WriteLine("Nombre: -> {0} | {1} \n", instrLink.Instructor.Nombre, instrLink.Instructor.Apellidos);
                 }
+
             }
         }
 
@@ -131,7 +129,7 @@ namespace LeerData
         static void Main(string[] args)
         {
             //Ejemplo de Lectura
-            // LecturaCursoProfesores();
+            //LecturaCursoProfesores();
 
             //Ejemplo de escritura
             //Console.WriteLine("Es estado de la Transaccion es: {0}", EscrituraInstructor());
@@ -140,7 +138,7 @@ namespace LeerData
             //Console.WriteLine("Es estado de la Transaccion es: {0}", SobreEscrituraInstructor());
 
             //Ejemplo de Sobre Escritura
-            Console.WriteLine("Es estado de la Transaccion es: {0}", RemoverInstructor());
+            //Console.WriteLine("Es estado de la Transaccion es: {0}", RemoverInstructor());
         }
     }
 }
